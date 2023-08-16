@@ -49,7 +49,7 @@ backendSpecific:
   GPT35: # GPT3.5 官方 API
     tokens: # 令牌列表
         # 你的api key
-      - token: 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
+      - token: sk-xxxxxxxx
         # OPENAI API请求的域名，使用转发或第三方API时修改
         endpoint: https://api.openai.com
     defaultEndpoint: https://api.openai.com # 默认 API 端点，一般不修改
