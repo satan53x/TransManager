@@ -155,6 +155,9 @@ class MainWindow(QMainWindow, Ui_TransManager):
 			print('自动重启', name)
 			manager.checkTrans()
 			manager.checkWait()
+		#尝试分发文件
+		ret = manager.distOrig(proj)
+		if ret == False: return
 		print('启动项目', name)
 		if proj.ctrl.window:
 			#self.printMdi.removeSubWindow(proj.ctrl.window)
@@ -176,8 +179,6 @@ class MainWindow(QMainWindow, Ui_TransManager):
 		self.printMdi.setActiveSubWindow(window)
 		#修改项目配置文件
 		self.applyApi(proj)
-		#尝试分发文件
-		manager.distOrig(proj)
 		#启动
 		manager.start(proj)
 		#保存配置

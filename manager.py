@@ -115,6 +115,10 @@ class TransManager:
 			return
 		if proj.ctrl:
 			proj.ctrl.show(output)
+			#检查api的limit
+			if proj.dayLimit:
+				proj.ctrl.showColor(QColor(242, 121, 112))
+				proj.dayLimit = False
 	
 	#子窗口关闭回调
 	def windowCloseCallback(self, window:QMdiSubWindow):
@@ -123,6 +127,7 @@ class TransManager:
 		if name not in manager.projs.keys(): return
 		proj:ProjData = manager.projs[name]
 		if proj.ctrl.window != window: return #不是一个窗口了
+		proj.restartPrint = proj.ctrl.isWindowEmpty()
 		manager.stop(proj)
 		proj.ctrl.window = None
 
@@ -130,8 +135,8 @@ class TransManager:
 	#分发原文
 	def distOrig(self, proj:ProjData):
 		if len(proj.waitList) > 0: 
-			print('项目还有尚未翻译的文件，本次不分发', proj.name)
-			return
+			#print('项目还有尚未翻译的文件，本次不分发', proj.name)
+			return True
 		for i in range(len(self.waitList)-1, -1, -1):
 			name = self.waitList[i]
 			if name in self.projsWaitList:
@@ -141,8 +146,9 @@ class TransManager:
 			proj.ctrl.copyFromManager(name, path)
 			self.waitList.pop(i)
 			self.projsWaitList.add(name)
-			return
+			return True
 		print('管理器中没有待翻译的文件', proj.name)
+		return False
 
 	def checkWait(self):
 		self.waitList.clear()
@@ -154,6 +160,9 @@ class TransManager:
 			if name not in transList:
 				if name not in self.projsWaitList:
 					self.waitList.insert(0, name)
+		text = f'等待分发的文件总数：{len(self.waitList)}'
+		print(text)
+		self.mainWindow.statusbar.showMessage(text)
 
 	#---------------------------------------------------------------
 	#检查所有项目译文

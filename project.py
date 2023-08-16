@@ -27,11 +27,19 @@ class ProjCtrl:
 		textBrowser = self.window.widget()
 		if textBrowser:
 			text = textBrowser.toPlainText()
-			if len(text) > 5000:
-				text = text[2000:]
+			if len(text) > 10000:
+				text = text[5000:]
 				textBrowser.setPlainText(text)
 			textBrowser.moveCursor(textBrowser.textCursor().End)
 			textBrowser.insertPlainText(output)
+
+	def isWindowEmpty(self):
+		textBrowser = self.window.widget()
+		if textBrowser:
+			text = textBrowser.toPlainText()
+			if text == '':
+				return True
+		return False
 
 	def getCmd(self):
 		command = self.preCmd.format(projpath=self.proj.path)
@@ -73,6 +81,7 @@ class ProjData:
 		self.process = None
 		self.ctrl:ProjCtrl = None
 		self.printThread:PrintThread = None
+		self.restartPrint = False
 		self.origList = []
 		self.transList = []
 		self.waitList = []
@@ -81,9 +90,20 @@ class ProjData:
 		self.apiUrl = ''
 		self.numOnce = 9
 		self.autoStart = False
+		self.dayLimit = False
+		
 
 	#启动打印读取线程
 	def startThread(self, callback):
+		# if self.printThread and self.printThread.state == 1:
+		# 	print('读取线程state为1，尝试退出')
+		# 	self.printThread.terminate()
+		# 	self.printThread.wait()
+		# 	print('读取线程已退出')
+		# 	self.printThread = None
+		if self.restartPrint:
+			self.printThread = None
+			self.restartPrint = False
 		if self.printThread == None:
 			self.printThread = PrintThread(self.name)
 			self.printThread.printSig.connect(callback)

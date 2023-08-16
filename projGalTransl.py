@@ -97,3 +97,6 @@ class ProjGalTransl(ProjTrans):
 		lst = output.splitlines()
 		if len(lst) > 0 and lst[-1].startswith('Done.'):
 			self.proj.autoStart = True
+			return
+		if '200 / day' in output:
+			self.proj.dayLimit = True
