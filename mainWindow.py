@@ -242,7 +242,7 @@ class MainWindow(QMainWindow, Ui_TransManager):
 			self.mainConfig.setValue(seq, [key, url])
 			count += 1
 		self.mainConfig.endGroup()
-		self.statusbar.showMessage(f'保存成功：{count}项')
+		self.statusbar.showMessage(f'API保存成功：{count}项')
 
 	#获取API
 	def getApi(self, target):
