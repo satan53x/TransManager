@@ -165,7 +165,9 @@ class MainWindow(QMainWindow, Ui_TransManager):
 			#window.hide.connect(self.subWindowClose)
 			#重设子窗口大小
 			sw = math.ceil(pow(len(manager.projs), 0.5))
+			sw = min(sw, 3)
 			sh = math.ceil(len(manager.projs) / sw)
+			sh = min(sh, 2)
 			width = self.projTable.size().width() // sw
 			height = self.projTable.size().height() // sh
 			window.resize(QSize(width, height))
