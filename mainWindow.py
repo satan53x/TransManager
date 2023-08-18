@@ -2,13 +2,15 @@ import math
 from time import sleep
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import QSettings, Qt, QTimer, QSize
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox
 from ui_transManager import Ui_TransManager
 from manager import manager
 from common	import initValue
 from project import ProjCtrl, ProjData
 
 class MainWindow(QMainWindow, Ui_TransManager):
+	app = None
+
 	def __init__(self, parent=None):
 		super(MainWindow, self).__init__(parent)
 		self.setupUi(self)
@@ -22,6 +24,7 @@ class MainWindow(QMainWindow, Ui_TransManager):
 		#self.printMdi.subWindowActivated.connect(self.subWindowActivated)
 		self.newApiButton.clicked.connect(self.showApi)
 		self.saveApiButton.clicked.connect(self.saveApi)
+		self.clearProjsButton.clicked.connect(self.clearProjsFile)
 		#计时器
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.handleTimer)
@@ -77,27 +80,6 @@ class MainWindow(QMainWindow, Ui_TransManager):
 		self.refreshApi()
 		manager.init()
 		self.refreshProjs()
-	
-	#选择工作目录
-	def chooseWorkpath(self):
-		dirpath = self.mainConfig.value('workpath')
-		dirpath = QFileDialog.getExistingDirectory(None, self.workpathButton.text(), dirpath)
-		if dirpath != '':
-			manager.workpath = dirpath
-			self.workpathEdit.setText(dirpath)
-			self.mainConfig.setValue('workpath', dirpath)
-			self.stopAll()
-			manager.init()
-			self.refreshProjs()
-	
-	#选择工具目录
-	def chooseToolpath(self):
-		dirpath, _ = QFileDialog.getOpenFileName(None, self.toolpathButton.text(), '.')
-		if dirpath != '':
-			manager.tooltype = self.tooltypeBox.currentIndex()
-			preCmd = manager.setPreCmd(dirpath)
-			self.preCmdEdit.setText(preCmd)
-			self.mainConfig.setValue('preCmd', preCmd)
 
 	#---------------------------------------------------------------
 	#刷新
@@ -272,7 +254,41 @@ class MainWindow(QMainWindow, Ui_TransManager):
 			proj.apiKey, proj.apiUrl = self.getApi(proj.apiSeq)
 			proj.numOnce = int(table.item(row, 3).text())
 			proj.ctrl.writeConfig()
+	#---------------------------------------------------------------
+	#选择工作目录
+	def chooseWorkpath(self):
+		dirpath = self.mainConfig.value('workpath')
+		dirpath = QFileDialog.getExistingDirectory(None, self.workpathButton.text(), dirpath)
+		if dirpath != '':
+			manager.workpath = dirpath
+			self.workpathEdit.setText(dirpath)
+			self.mainConfig.setValue('workpath', dirpath)
+			self.stopAll()
+			manager.init()
+			self.refreshProjs()
 	
+	#选择工具目录
+	def chooseToolpath(self):
+		dirpath, _ = QFileDialog.getOpenFileName(None, self.toolpathButton.text(), '.')
+		if dirpath != '':
+			manager.tooltype = self.tooltypeBox.currentIndex()
+			preCmd = manager.setPreCmd(dirpath)
+			self.preCmdEdit.setText(preCmd)
+			self.mainConfig.setValue('preCmd', preCmd)
+	
+	def clearProjsFile(self):
+		result = QMessageBox.question(self, '警告', \
+				'危险操作，确定清理所有项目的文件吗？',\
+				QMessageBox.Yes | QMessageBox.No)
+		if result == QMessageBox.No: return
+		for name, proj in manager.projs.items():
+			if proj.process:
+				print('项目正在运行无法清理', name)
+				continue
+			proj.ctrl.clearAllFile()
+		print('清理完成')
+		self.refreshProjs()
+
 	#---------------------------------------------------------------
 	def workDone(self, callback):
 		callback(self)

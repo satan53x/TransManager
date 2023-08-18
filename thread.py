@@ -3,7 +3,7 @@ import types
 from PyQt5.QtCore import pyqtSignal, QThread, QMutex
 
 #打印读取线程
-import debugpy
+#import debugpy
 class PrintThread(QThread):
 	printSig = pyqtSignal(list)
 
@@ -15,7 +15,7 @@ class PrintThread(QThread):
 
 	def run(self):
 		from manager import manager
-		debugpy.debug_this_thread()
+		#debugpy.debug_this_thread()
 		while True:
 			self.mutex.lock()
 			#检测项目是否存在

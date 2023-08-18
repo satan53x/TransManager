@@ -150,6 +150,7 @@ class TransManager:
 		print('管理器中没有待翻译的文件', proj.name)
 		return False
 
+	#检查待翻译
 	def checkWait(self):
 		self.waitList.clear()
 		#译文
@@ -163,6 +164,10 @@ class TransManager:
 		text = f'等待分发的文件总数：{len(self.waitList)}'
 		print(text)
 		self.mainWindow.statusbar.showMessage(text)
+
+	#分发字典
+	def distDic(self):
+		pass
 
 	#---------------------------------------------------------------
 	#检查所有项目译文

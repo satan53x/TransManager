@@ -17,3 +17,15 @@ def initValue(setting, name, v):
 		v = setting.value(name)
 		#print('Load Config', name, v)
 	return v
+
+def clearFolder(dirpath):
+	for name in os.listdir(dirpath):
+		path = os.path.join(dirpath, name)
+		try:
+			if os.path.isfile(path):
+				os.unlink(path)  # 删除文件
+				print('删除文件：', name)
+			# elif os.path.isdir(path):
+			# 	os.rmdir(path)   # 删除子文件夹
+		except Exception as e:
+			print(f"Error deleting {path}: {e}")

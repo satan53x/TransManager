@@ -2,36 +2,37 @@ import os
 import shutil
 from project import ProjCtrl
 import yaml
-
-OrigDirName = 'json_jp'
-TransDirName = 'json_cn'
+from common import clearFolder
 
 class ProjTrans(ProjCtrl):
 
-	def checkFile(self, dirName, fileName):
-		if dirName == 'orig':
-			dirName = OrigDirName
-		elif dirName == 'trans':
-			dirName = TransDirName
-		path = os.path.join(self.proj.path, dirName, fileName)
-		if os.path.isfile(path):
-			return True, path
-		else:
-			return False, path
+	def __init__(self, proj=None):
+		super().__init__(proj)
+		self.origPath = os.path.join(self.proj.path, 'json_jp')
+		self.transPath = os.path.join(self.proj.path, 'json_cn')
+
+	# def checkFile(self, dirName, fileName):
+	# 	if dirName == 'orig':
+	# 		dirName = OrigDirName
+	# 	elif dirName == 'trans':
+	# 		dirName = TransDirName
+	# 	path = os.path.join(self.proj.path, dirName, fileName)
+	# 	if os.path.isfile(path):
+	# 		return True, path
+	# 	else:
+	# 		return False, path
 		
 	def checkFiles(self):
 		self.proj.origList.clear()
 		self.proj.transList.clear()
 		self.proj.waitList.clear()
-		origPath = os.path.join(self.proj.path, OrigDirName)
-		transPath = os.path.join(self.proj.path, TransDirName)
 		#译文
-		if os.path.isdir(transPath):
-			for name in os.listdir(transPath):
+		if os.path.isdir(self.transPath):
+			for name in os.listdir(self.transPath):
 				self.proj.transList.append(name)
 		#原文
-		if os.path.isdir(origPath):
-			for name in os.listdir(origPath):
+		if os.path.isdir(self.origPath):
+			for name in os.listdir(self.origPath):
 				self.proj.origList.append(name)
 				#添加wait
 				if name not in self.proj.transList:
@@ -41,14 +42,14 @@ class ProjTrans(ProjCtrl):
 	def copyToManager(self, transDir, transList):
 		for name in self.proj.transList:
 			if name in transList: continue #已存在
-			src = os.path.join(self.proj.path, TransDirName, name)
+			src = os.path.join(self.transPath, name)
 			dst = os.path.join(transDir, name)
 			shutil.copy(src, dst)
 			print(f'从项目{self.proj.name}复制译文 {name}')
 	
 	#导入原文
 	def copyFromManager(self, name, src):
-		dst = os.path.join(self.proj.path, OrigDirName, name)
+		dst = os.path.join(self.origPath, name)
 		if os.path.isfile(dst):
 			print(f'>> {self.proj.name}项目已存在{name}，请检查文件是否一致')
 			return False
@@ -57,6 +58,10 @@ class ProjTrans(ProjCtrl):
 		self.proj.origList.append(name)
 		self.proj.waitList.append(name)
 		return True
+	
+	def clearAllFile(self):
+		clearFolder(self.origPath)
+		clearFolder(self.transPath)
 
 #---------------------------------------------------------------
 class ProjGalTransl(ProjTrans):
