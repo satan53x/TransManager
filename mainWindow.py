@@ -123,6 +123,7 @@ class MainWindow(QMainWindow, Ui_TransManager):
 		manager.checkTrans()
 		manager.checkWait()
 		for name, proj in manager.projs.items():
+			manager.distConfig(proj) #复制配置
 			self.startProj(name)
 		if len(manager.projs) > 0:
 			self.mainTabs.setCurrentIndex(1)

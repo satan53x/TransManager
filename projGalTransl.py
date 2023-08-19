@@ -105,3 +105,13 @@ class ProjGalTransl(ProjTrans):
 			return
 		if '200 / day' in output:
 			self.proj.dayLimit = True
+	
+	def copyFile(self, srcdir):
+		src = os.path.join(srcdir, '项目GPT字典.txt')
+		if os.path.isfile(src):
+			dst = os.path.join(self.proj.path, '项目GPT字典.txt')
+			shutil.copy(src, dst)
+		src = os.path.join(srcdir, '人名替换表.csv')
+		if os.path.isfile(src):
+			dst = os.path.join(self.proj.path, '人名替换表.csv')
+			shutil.copy(src, dst)

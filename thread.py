@@ -35,21 +35,25 @@ class PrintThread(QThread):
 				self.mutex.unlock()
 				sleep(0.5)
 				continue
+			self.state = 2 #readline()阻塞
 			self.mutex.unlock()
 			output = proj.process.stdout.readline() #阻塞
+			self.mutex.lock()
 			if output:
+				self.state = 1 #正常运行
+				self.mutex.unlock()
 				sleep(0.05)
 				#print('打印', self.name, len(output), output)
 				self.printSig.emit([self.name, output])
 			else:
-				self.mutex.lock()
 				if proj.process.poll() is not None:
-					self.state = 0
+					self.state = 0 #暂停状态
 					print('进程终止，暂停打印线程', self.name, output)
 					self.mutex.unlock()
 					self.printSig.emit([self.name, None])
 					continue
-				self.mutex.unlock()
+				else:
+					self.mutex.unlock()
 
 #---------------------------------------------------------------
 class WorkThread(QThread):

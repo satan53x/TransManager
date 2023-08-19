@@ -97,6 +97,8 @@ class TransManager:
 			proj.process.terminate()
 			proj.process = None
 			#proj.ctrl.window = None
+		if proj.printThread.state == 2: #还在阻塞
+			proj.restartPrint = True
 		proj.printThread.state = 0 #设置打印线程状态
 		proj.printThread.mutex.unlock()
 		proj.ctrl.showColor(QColor(255, 255, 255))
@@ -165,9 +167,10 @@ class TransManager:
 		print(text)
 		self.mainWindow.statusbar.showMessage(text)
 
-	#分发字典
-	def distDic(self):
-		pass
+	#分发配置：如字典
+	def distConfig(self, proj):
+		srcdir = os.path.join(self.workpath, 'sampleProj')
+		proj.ctrl.copyFile(srcdir)
 
 	#---------------------------------------------------------------
 	#检查所有项目译文
