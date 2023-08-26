@@ -102,6 +102,8 @@ class ProjData:
 		# 	print('读取线程已退出')
 		# 	self.printThread = None
 		if self.restartPrint:
+			if self.printThread:
+				self.printThread.terminate()
 			self.printThread = None
 			self.restartPrint = False
 		if self.printThread == None:

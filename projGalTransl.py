@@ -10,6 +10,7 @@ class ProjTrans(ProjCtrl):
 		super().__init__(proj)
 		self.origPath = os.path.join(self.proj.path, 'json_jp')
 		self.transPath = os.path.join(self.proj.path, 'json_cn')
+		self.cachePath = os.path.join(self.proj.path, 'transl_cache')
 
 	# def checkFile(self, dirName, fileName):
 	# 	if dirName == 'orig':
@@ -62,6 +63,7 @@ class ProjTrans(ProjCtrl):
 	def clearAllFile(self):
 		clearFolder(self.origPath)
 		clearFolder(self.transPath)
+		clearFolder(self.cachePath)
 
 #---------------------------------------------------------------
 class ProjGalTransl(ProjTrans):
