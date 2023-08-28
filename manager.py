@@ -60,6 +60,8 @@ class TransManager:
 		for name in list(self.projs.keys()):
 			if name not in existList:
 				del self.projs[name]
+		manager.checkTrans()
+		manager.checkWait()
 
 	def getCtrlClass(self):
 		return ProjTypeList[self.tooltype]
