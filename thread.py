@@ -39,8 +39,8 @@ class PrintThread(QThread):
 			self.mutex.unlock()
 			output = proj.process.stdout.readline() #阻塞
 			self.mutex.lock()
+			self.state = 1 #正常运行
 			if output:
-				self.state = 1 #正常运行
 				self.mutex.unlock()
 				sleep(0.05)
 				#print('打印', self.name, len(output), output)
